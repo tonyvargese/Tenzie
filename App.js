@@ -1,11 +1,24 @@
 import React from "react"
 import Die from "./Die"
 import {nanoid} from "nanoid"
+import Confetti from "react-confetti"
 
 export default function App() {
 
     const [dice, setDice] = React.useState(allNewDice())
+    const [tenzies, setTenzies] = React.useState(false)
     
+    React.useEffect(() => {
+        const allHeld = dice.every(die => die.isHeld)
+        const firstValue = dice[0].value
+        const allSameValue = dice.every(die => die.value === firstValue)
+        if (allHeld && allSameValue) {
+            setTenzies(true)
+            console.log("You won!")
+        }
+    }, [dice])
+
+
     function generateNewDie() {
         return {
             value: Math.ceil(Math.random() * 6),
@@ -23,15 +36,6 @@ export default function App() {
     }
     
     
-/**
- * Challenge: Update the `rollDice` function to not just roll
- * all new dice, but instead to look through the existing dice
- * to NOT role any that are being `held`.
- * 
- * Hint: this will look relatively similiar to the `holdDice`
- * function below. When creating new dice, remember to use
- * `id: nanoid()` so any new dice have an `id` as well.
- */
     function rollDice() {
         setDice(oldDice => oldDice.map(die => {
             return die.isHeld ? 
@@ -59,12 +63,18 @@ export default function App() {
     
     return (
         <main>
+            {tenzies && <Confetti />}
             <h1 className="title">Tenzies</h1>
             <p className="instructions">Roll until all dice are the same. Click each die to freeze it at its current value between rolls.</p>
             <div className="dice-container">
                 {diceElements}
             </div>
-            <button className="roll-dice" onClick={rollDice}>Roll</button>
+            <button 
+                className="roll-dice" 
+                onClick={rollDice}
+            >
+                {tenzies ? "New Game" : "Roll"}
+            </button>
         </main>
     )
 }
