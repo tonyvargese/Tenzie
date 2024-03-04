@@ -14,10 +14,8 @@ export default function App() {
         const allSameValue = dice.every(die => die.value === firstValue)
         if (allHeld && allSameValue) {
             setTenzies(true)
-            console.log("You won!")
         }
     }, [dice])
-
 
     function generateNewDie() {
         return {
@@ -35,13 +33,22 @@ export default function App() {
         return newDice
     }
     
+/**
+ * Challenge: Allow the user to play a new game when the
+ * button is clicked and they've already won
+ */
     
     function rollDice() {
-        setDice(oldDice => oldDice.map(die => {
-            return die.isHeld ? 
-                die :
-                generateNewDie()
-        }))
+        if(!tenzies) {
+            setDice(oldDice => oldDice.map(die => {
+                return die.isHeld ? 
+                    die :
+                    generateNewDie()
+            }))
+        } else {
+            setTenzies(false)
+            setDice(allNewDice())
+        }
     }
     
     function holdDice(id) {
@@ -65,7 +72,8 @@ export default function App() {
         <main>
             {tenzies && <Confetti />}
             <h1 className="title">Tenzies</h1>
-            <p className="instructions">Roll until all dice are the same. Click each die to freeze it at its current value between rolls.</p>
+            <p className="instructions">Roll until all dice are the same. 
+            Click each die to freeze it at its current value between rolls.</p>
             <div className="dice-container">
                 {diceElements}
             </div>
